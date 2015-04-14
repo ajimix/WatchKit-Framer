@@ -12,19 +12,23 @@ Apple Watch Kit for FramerJS to help you easily create Apple Watch interfaces in
 
 Creates an Apple Watch status bar.
 
+![Apple Watch Status Bar](img/status-bar.jpg)
+
 ```coffeescript
 statusBar = new WatchKit.StatusBar
 	title: "Some title"
-	back: true # Show or not the back button
-	time: true # Show or not the time
+	back: true # Display or not the back button
+	time: true # Display or not the time
 ```
 
 ### Buttons
 
 Buttons should have the Y position where you want to place them in the screen.  
-Also they can be disabled using the `disabled: true`.
+Buttons perform an animation when the user clicks them.
 
 **Button for actions**
+
+![Apple Watch Action Button](img/action-button.jpg)
 
 ```coffeescript
 actionButton = new WatchKit.ActionButton "Button title", y: 50
@@ -32,9 +36,17 @@ actionButton = new WatchKit.ActionButton "Button title", y: 50
 
 **Button for dismiss**
 
+![Apple Watch Dismiss Button](img/dismiss-button.jpg)
+
 ```coffeescript
 dismissButton = new WatchKit.DismissButton y: 140
 ```
+
+**Disable a button**
+
+Buttons can be disabled using the `disabled: true`.
+
+![Apple Watch Disabled Button](img/disabled-button.jpg)
 
 ### Page
 
@@ -58,9 +70,11 @@ page.addLayer layer
 Creates a framer page component with the apple watch pagination dots.  
 Pagination contains a set of pages.
 
+![Apple Watch Pagination](img/pagination.jpg)
+
 ```coffeescript
 pagination = new WatchKit.Pagination
-	showPagination: true # Show or hide the pagination dots
+	showPagination: true # Display or not the pagination dots
 ```
 
 In order to add pages use the `addPages` method.
