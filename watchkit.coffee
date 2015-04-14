@@ -80,8 +80,13 @@ class exports.Button extends Layer
 class exports.ActionButton extends exports.Button
 	constructor: (title, options = {}) ->
 		options.backgroundColor ?= "rgba(255, 255, 255, 0.14)"
+		if options.image?
+			iconImage = options.image
+			options.image = null
 
 		super title, options
+
+		imageLayer = new Layer image: iconImage, width: 50, height: 50, superLayer: @, y: -45, x: 15
 
 class exports.DismissButton extends exports.Button
 	constructor: (options = {}) ->
@@ -218,3 +223,5 @@ class exports.Separator extends Layer
 		options.backgroundColor ?= "white"
 
 		super options
+
+		@centerX()

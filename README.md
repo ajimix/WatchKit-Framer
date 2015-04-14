@@ -45,6 +45,16 @@ actionButton = new WatchKit.ActionButton "Button title", y: 50
 dismissButton = new WatchKit.DismissButton y: 140
 ```
 
+**Button with image**
+
+Image should follow 50x50
+
+![Apple Watch Image Button](img/image-button.jpg)
+
+```coffeescript
+imageButton = new WatchKit.ActionButton image: "images/some-icon.jpg", y: 140
+```
+
 **Disable a button**
 
 Buttons can be disabled using the `disabled: true`.
@@ -71,7 +81,7 @@ page.addLayer layer
 ### Pagination
 
 Creates a framer page component with the apple watch pagination dots.  
-Pagination contains a set of pages.
+Pagination contains a set of pages that can be swiped.
 
 ![Apple Watch Pagination](img/pagination.jpg)
 
