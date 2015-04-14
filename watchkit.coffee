@@ -209,3 +209,12 @@ class exports.ModalSheet extends Layer
 		@animate
 			properties: y: Screen.height
 			curve: @animationCurve
+
+class exports.Separator extends Layer
+	constructor: (options = {}) ->
+		options.height = 4
+		options.width ?= Screen.width
+		options.borderRadius = 4
+		options.backgroundColor ?= "white"
+
+		super options

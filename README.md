@@ -100,11 +100,21 @@ Use `present()` and `dismiss()` to show or hide the modal.
 ![Apple Watch Modal Sheet](img/modal-sheet.gif)
 
 ```coffeescript
-modalSheet = new ModalSheet
+modalSheet = new WatchKit.ModalSheet
 	dismissTitle: "Dismiss" # Pass a dismiss title to enable a dismiss button
 someLayer = new Layer
 
 modalSheet.addLayer someLayer
 
 modalSheet.present()
+```
+
+### Separator
+
+Creates a default Apple separator. Specify the background color for a different color than the default one.
+
+![Apple Watch Separator](img/separator.jpg)
+
+```coffeescript
+separator = new WatchKit.Separator y: 100, backgroundColor: "blue"
 ```
