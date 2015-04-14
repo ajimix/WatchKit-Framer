@@ -161,3 +161,51 @@ class exports.Page extends Layer
 
 	addLayer: (layer) ->
 		layer.superLayer = @
+
+class exports.ModalSheet extends Layer
+	constructor: (options = {}) ->
+		options.width ?= Screen.width
+		options.height ?= Screen.height
+		options.y ?= Screen.height
+		options.backgroundColor ?= "black"
+
+		super options
+
+		@animationCurve = "spring(300,30,0)"
+
+		if options.dismissTitle
+			dismissLayer = new Layer
+				width: Screen.width
+				height: 40
+				backgroundColor: "transparent"
+				html: options.dismissTitle
+				superLayer: @
+			dismissLayer.style =
+				fontFamily: "SanFranciscoText-Regular"
+				fontSize: "32px"
+				color: "#FFFFFF"
+				lineHeight: "38px"
+			dismissLayer.on Events.TouchStart, ->
+				dismissLayer.animate
+					properties: opacity: .5, scale: .95
+					curve: clickAnimation
+			dismissLayer.on Events.TouchEnd, ->
+				dismissLayer.animate
+					properties: opacity: 1, scale: 1
+					curve: clickAnimation
+			dismissLayer.on Events.Click, =>
+				@dismiss()
+
+	addLayer: (layer) ->
+		layer.superLayer = @
+
+	present: ->
+		@bringToFront()
+		@animate
+			properties: y: 0
+			curve: @animationCurve
+
+	dismiss: ->
+		@animate
+			properties: y: Screen.height
+			curve: @animationCurve

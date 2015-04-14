@@ -2,9 +2,12 @@
 Apple Watch Kit for FramerJS to help you easily create Apple Watch interfaces in Framer.
 
 ## Add it in your Framer Studio project
-- Download the project
-- Copy `watchkit.coffee` into `modules/` folder
-- Import it in Framer Studio by writing: `WatchKit = require "watchkit"`
+
+- Download the project from github.
+- Copy `watchkit.coffee` into `modules/` folder.
+- Import it in Framer Studio by writing: `WatchKit = require "watchkit"`.
+
+**Note:** you need the San Francisco font [provided by Apple](https://developer.apple.com/watchkit/).
 
 ## Components
 
@@ -87,4 +90,21 @@ someLayer = new Layer
 page2.addLayer someLayer
 
 pagination.addPages page1, page2
+```
+
+### Modal Sheet
+
+Creates a modal sheet exactly with the same behaviour as the one in the watch.  
+Use `present()` and `dismiss()` to show or hide the modal.
+
+![Apple Watch Modal Sheet](img/modal-sheet.gif)
+
+```coffeescript
+modalSheet = new ModalSheet
+	dismissTitle: "Dismiss" # Pass a dismiss title to enable a dismiss button
+someLayer = new Layer
+
+modalSheet.addLayer someLayer
+
+modalSheet.present()
 ```
