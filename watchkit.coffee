@@ -1,4 +1,4 @@
-clickAnimation = "spring(500,30,0)"
+exports.clickAnimationCurve = "spring(500,30,0)"
 statusBarVisible = false
 statusBarHeight = 40
 
@@ -28,7 +28,7 @@ class exports.StatusBar extends Layer
 			height: statusBarHeight
 			superLayer: @
 
-		titleLayer.style = _.extend defaultFont,
+		titleLayer.style = _.extend {}, defaultFont,
 			backgroundColor: "transparent"
 			color: "#FF9501"
 
@@ -40,7 +40,7 @@ class exports.StatusBar extends Layer
 		if options.time
 			timeWidth = 80
 			timeLayer = new Layer x: Screen.width - timeWidth, html: "10:09", width: timeWidth, height: statusBarHeight, superLayer: @
-			timeLayer.style = _.extend defaultFont,
+			timeLayer.style = _.extend {}, defaultFont,
 				backgroundColor: "transparent"
 				color: "#9BA0AA"
 
@@ -63,7 +63,7 @@ class exports.Button extends Layer
 
 		super options
 
-		@style = _.extend defaultFont,
+		@style = _.extend {}, defaultFont,
 			textAlign: "center"
 			paddingTop: "20px"
 
@@ -71,11 +71,11 @@ class exports.Button extends Layer
 			@on Events.TouchStart, ->
 				@animate
 					properties: scale: .98, opacity: .5
-					curve: clickAnimation
+					curve: exports.clickAnimationCurve
 			@on Events.TouchEnd, ->
 				@animate
 					properties: scale: 1, opacity: 1
-					curve: clickAnimation
+					curve: exports.clickAnimationCurve
 
 class exports.ActionButton extends exports.Button
 	constructor: (title, options = {}) ->
@@ -86,7 +86,8 @@ class exports.ActionButton extends exports.Button
 
 		super title, options
 
-		imageLayer = new Layer image: iconImage, width: 50, height: 50, superLayer: @, y: -45, x: 15
+		if options.image?
+			imageLayer = new Layer image: iconImage, width: 50, height: 50, superLayer: @, y: -45, x: 15
 
 class exports.DismissButton extends exports.Button
 	constructor: (options = {}) ->
@@ -193,11 +194,11 @@ class exports.ModalSheet extends Layer
 			dismissLayer.on Events.TouchStart, ->
 				dismissLayer.animate
 					properties: opacity: .5, scale: .95
-					curve: clickAnimation
+					curve: exports.clickAnimationCurve
 			dismissLayer.on Events.TouchEnd, ->
 				dismissLayer.animate
 					properties: opacity: 1, scale: 1
-					curve: clickAnimation
+					curve: exports.clickAnimationCurve
 			dismissLayer.on Events.Click, =>
 				@dismiss()
 
@@ -225,3 +226,155 @@ class exports.Separator extends Layer
 		super options
 
 		@centerX()
+
+class exports.Notification extends Layer
+	@contentBodyFont:
+		fontFamily: "SanFranciscoText-Regular"
+		fontSize: "30px"
+		color: "#FFF"
+		lineHeight: "35px"
+
+	constructor: (options = {}) ->
+		@launchAnimationCurve = "spring(120,18,0)"
+		@easeOutAnimationCurve = "spring(320,26,0)"
+		defaultFont =
+			fontFamily: "SanFranciscoText-Regular"
+			color: "#FFF"
+
+		@backgroundFadeLayer = new Layer width: Screen.width, height: Screen.height, backgroundColor: "black", opacity: 0
+
+		iconImage = options.image
+		options.image = null
+		options.width = Screen.width
+		options.height = Screen.height
+		options.backgroundColor = "transparent"
+		options.y = Screen.height
+
+		super options
+
+		@iconLayer = new Layer y: Screen.height + 40, width: 196, height: 196, image: iconImage, borderRadius: 98
+		@iconLayer.backgroundColor = if iconImage? then "transparent" else "#FF2968"
+		@iconLayer.centerX()
+
+		if options.title?
+			firstTitleLayer = new Layer
+				y: 250
+				width: Screen.width
+				height: 50
+				html: options.title
+				superLayer: @
+				style: _.extend {}, defaultFont,
+					textAlign: "center"
+					backgroundColor: "transparent"
+					fontSize: "38px"
+					lineHeight: "45px"
+			firstTitleLayer.centerX()
+
+		if options.appName?
+			firstAppName = new Layer
+				y: 310
+				width: Screen.width
+				height: 50
+				html: options.appName
+				superLayer: @
+				style: _.extend {}, defaultFont,
+					textAlign: "center"
+					backgroundColor: "transparent"
+					fontSize: "28px"
+					color: if options.appNameColor? then options.appNameColor else "#FF2968"
+					letterSpacing: "0.21px"
+					lineHeight: "34px"
+					textTransform: "uppercase"
+			firstAppName.centerX()
+
+		@notificationContentLayer = new ScrollComponent width: Screen.width, height: Screen.height, backgroundColor: "transparent", scrollHorizontal: false, mouseWheelEnabled: true, y: Screen.height
+
+		notificationContentBodyLayer = new Layer
+			y: 36
+			borderRadius: "10px"
+			width: Screen.width
+			height: if options.contentBodyLayer? then 110 + options.contentBodyLayer.height else 140
+			backgroundColor: if options.contentBodyBackgroundColor? then options.contentBodyBackgroundColor else "rgba(255, 255, 255, 0.14)"
+			superLayer: @notificationContentLayer.content
+
+		if options.title?
+			notificationContentBodyTitleLayer = new Layer
+				y: 73
+				x: 14
+				html: options.title
+				width: notificationContentBodyLayer.width - 28
+				height: 38
+				superLayer: notificationContentBodyLayer
+				style: _.extend {}, defaultFont,
+					fontFamily: "SanFranciscoText-Semibold"
+					fontSize: "30px"
+					lineHeight: "36px"
+					backgroundColor: "transparent"
+
+		if options.contentBodyLayer?
+			options.contentBodyLayer.y = if options.title? then 110 else 73
+			options.contentBodyLayer.width = notificationContentBodyLayer.width
+			options.contentBodyLayer.superLayer = notificationContentBodyLayer
+
+		notificationContentTitleLayer = new Layer
+			height: 54
+			superLayer: notificationContentBodyLayer
+			backgroundColor: if options.contentTitleBackgroundColor? then options.contentTitleBackgroundColor else "rgba(255, 255, 255, 0.1)"
+			width: Screen.width
+			borderRadius: "10px 10px 0 0"
+			html: options.appName
+			style: _.extend {}, defaultFont,
+				textAlign: "right"
+				fontSize: "24px"
+				letterSpacing: "0.6px"
+				lineHeight: "29px"
+				textTransform: "uppercase"
+				padding: "12px 18px 0"
+
+		@lastActionButtonY = notificationContentBodyLayer.height + notificationContentBodyLayer.y
+		@notificationContentLayer.updateContent()
+
+	show: ->
+		# Add the dismiss on show so we don't have to care about positioning on the last position
+		@addActionButton new exports.DismissButton
+		@iconLayer.bringToFront()
+		@backgroundFadeLayer.animate
+			properties: opacity: .8
+			curve: @launchAnimationCurve
+		@animate
+			properties: y: 0
+			curve: @launchAnimationCurve
+		@iconLayer.animate
+			properties: y: 40
+			curve: @launchAnimationCurve
+
+		Utils.delay 1, =>
+			iconLayerAnimation = @iconLayer.animate
+				properties:
+					width: 90
+					height: 90
+					x: 15
+					y: 5
+				curve: @easeOutAnimationCurve
+			@backgroundFadeLayer.animate
+				properties: opacity: 0
+				curve: @easeOutAnimationCurve
+			@animate
+				properties: opacity: 0
+				curve: @easeOutAnimationCurve
+			@notificationContentLayer.animate
+				properties: y: 0
+				curve: @easeOutAnimationCurve
+			iconLayerAnimation.on Events.AnimationEnd, =>
+				@iconLayer.superLayer = @notificationContentLayer.content
+
+	addActionButton: (actionButton) ->
+		buttonPaddingTop = 8
+		actionButton.superLayer = @notificationContentLayer.content
+		actionButton.y = @lastActionButtonY + buttonPaddingTop
+		@lastActionButtonY += actionButton.height + buttonPaddingTop
+		@notificationContentLayer.updateContent()
+
+	addActionButtons: (actionButtons...) ->
+		for actionButton in actionButtons
+			@addActionButton actionButton
