@@ -97,7 +97,7 @@ Additionally you can configure `appNameColor`, `contentBodyBackgroundColor` and 
 ```coffeescript
 contentBodyLayer = new Layer
 	html: "Lorem ipsum dolor sit amet."
-	style: _.extend {}, WatckKit.Notification.contentBodyFont,
+	style: _.extend {}, WatchKit.Notification.contentBodyFont,
 		padding: "0 14px" # Set some padding for better display
 		backgroundColor: "transparent"
 
